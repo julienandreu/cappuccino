@@ -1,0 +1,13 @@
+{
+  "name": "cappuccino",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:julienandreu/cappuccino.git",
+  "author": "Julien Andreu <julienandreu@me.com>",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.20",
+    "monet": "^0.9.1",
+    "rxjs": "^6.6.3"
+  }
+}
