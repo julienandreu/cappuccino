@@ -106,7 +106,8 @@ const field = <T extends Record<string, unknown>, K extends keyof T = keyof T>(k
         })();
         console.debug('Field', key, input, data);
         if (!(key in data)) {
-            throw new Error(`Field ${String(key)} not found in input:\n${JSON.stringify(data, null, 2)}`);
+            console.error(`Field ${String(key)} not found in input:`, JSON.stringify(data, null, 2));
+            throw new Error('Field execution failed!');
         }
         console.debug('Field', key, input, data, data[key]);
         return data[key];
@@ -137,13 +138,16 @@ const loop = <T extends unknown[]>(closure: (item: T[number], index: number, con
 
 const automationWeb = (scenarioName: string) => {
     console.debug('AutomationWeb', scenarioName);
-    return (input: Record<PropertyKey, unknown>) => {
+    return <T>(input: Record<PropertyKey, unknown>) => {
         console.debug('AutomationWeb', scenarioName, input);
         return {
             data: {
                 input,
                 scenarioName,
             },
+            output: {
+                input: input.split('').reverse().join(''),
+            } as T,
             content: '_content_',
             url: '_url_'
         };
@@ -178,130 +182,28 @@ const _valueDefinition = JSON.stringify({
 
 console.debug = () => { };
 
-// Sequential
-
-const _start = start();
-const _value = value(_valueDefinition);
-const _userInput = userInput(_value)(_start)({ names: ['Elon Musk', 'Tim Cook'] });
-const _field = field<_ValueDefinition>('names')(_userInput);
-const _linkedInSearch = automationWeb('LinkedInSearch')
-
-const _closure = (item) => _linkedInSearch({ searchQuery: item });
-
-const _loop = loop(_closure)(_field);
-const _end = end(_loop);
-
-console.group('Static');
-console.log("1. Start:", _start);
-console.log("2. Value:", _value);
-console.log("3. UserInput:", _userInput);
-console.log("4. Field:", _field);
-console.log("5. AutomationWeb:", _linkedInSearch);
-console.log("6. Closure:", _closure);
-console.log("7. Loop:", _loop);
-console.log("8. End:", _end);
-console.groupEnd();
-
-// Chained
-
-const _chained = end(
-    loop
-        (
-            (item) => automationWeb
-                ('LinkedInSearch')
-                ({ searchQuery: item })
-        )
-        (
-            field<_ValueDefinition>('names')
-                (
-                    userInput
-                        (value
-                            (_valueDefinition)
-                        )
-                        (start
-                            ()
-                        )
-                        ({ names: ['Elon Musk', 'Tim Cook'] })
-                )
-        )
-);
-
-console.group('Chained');
-console.log("1. _chained:", _chained);
-console.groupEnd();
-
-// Piped
-
-const _profiles = pipe(
-    start,
-    pipe(
-        () => _valueDefinition,
-        value,
-        userInput,
-        () => ({ names: ['Elon Musk', 'Tim Cook'] }),
-    ),
-    field<_ValueDefinition>('names'),
-)
-
-// const _loopProfiles = pipe(
-//     loop(_closure),
-// );
-
-// const _piped = pipe(
-//     () => _loopProfiles,
-//     _profiles,
-//     end,
-// );
-
-// // const _piped = pipe(
-// //     () => loop(_closure)(_profiles()),
-// //     end,
-// // );
-
-const _piped = () => loop(_closure)(_profiles());
-
-// const _piped = pipe(
-//     loop,
-//     pipe(
-//         start,
-//         pipe(
-//             () => _valueDefinition,
-//             value,
-//             userInput,
-//             () => ({ names: ['Elon Musk', 'Tim Cook'] }),
-//         ),
-//         field<_ValueDefinition>('names'),
-//     ),
-//     (item) => automationWeb('LinkedInSearch')({ searchQuery: item }),
-//     end,
-// );
-
-console.group('Piped');
-console.log("1. _piped:", _piped(JSON.stringify({ names: ['Elon Musk', 'Tim Cook'] })));
-console.groupEnd();
-
 // Workflow
 
-const workflow = pipe(
+// Workflow Implementation
+const retrieveCEOs = pipe(
     start,
-    userInput<{ people: { name: string }[] }>({ people: [{ name: '' }] }),
-    field('people'),
-    loop((person) =>
+    value,
+    userInput<{ names: string[] }>(_valueDefinition)('{"names": []}'),
+    field<{ names: string[] }, 'names'>('names'),
+    loop((person: string) =>
         pipe(
-            automationWeb('LinkedInSearch'),
-            field('data'),
-            field('ceoName')
+            automationWeb<{ input: { name: string } }>('LinkedInSearch'),
+            field<{ output: Record<string, unknown> }, 'output'>('output'),
+            field<{ input: string }, 'input'>('input'),
         )(person)
     ),
     end
 );
 
+// Example Usage
 const input = JSON.stringify({
-    people: [
-        { name: "Alice Johnson" },
-        { name: "Bob Smith" }
-    ]
+    names: ["Person A", "Person B", "Person C"]
 });
 
-const ceoList = workflow(input);
-console.log(ceoList); 
+const result = retrieveCEOs(input);
+console.log(result);
