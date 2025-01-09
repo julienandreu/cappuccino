@@ -1,0 +1,27 @@
+name: "LinkedIn Profile Lookup"
+steps:
+  - name: "Ask for User Name"
+    uses: "ManualInput"
+    id: "ask-user-name"
+    inputs:
+      question: "Please provide the LinkedIn profile name:"
+
+  - name: "Search LinkedIn Profile"
+    uses: "LinkedInSearch"
+    id: "linkedin-search"
+    inputs:
+      query: "${{ ask-user-name.outputs.name }}"
+
+  - name: "Log Company Information"
+    uses: "Log"
+    inputs:
+      data: "Company: ${{ linkedin-search.outputs.company }}"
+
+  - name: "Log CEO Information"
+    uses: "Log"
+    inputs:
+      data: |
+        CEO Name: ${{ linkedin-search.outputs.ceo.name }}
+        Title: ${{ linkedin-search.outputs.ceo.title }}
+        Location: ${{ linkedin-search.outputs.ceo.location }}
+        LinkedIn: ${{ linkedin-search.outputs.ceo.url }}

@@ -1,13 +1,16 @@
 {
   "name": "cappuccino",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:julienandreu/cappuccino.git",
-  "author": "Julien Andreu <julienandreu@me.com>",
-  "license": "MIT",
+  "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "dev": "deno --allow-read --allow-write --allow-env engine/engine.ts"
+  },
   "dependencies": {
-    "lodash": "^4.17.20",
-    "monet": "^0.9.1",
-    "rxjs": "^6.6.3"
+    "jsonpath-plus": "^10.2.0",
+    "nanoid": "^5.0.9",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
   }
 }
