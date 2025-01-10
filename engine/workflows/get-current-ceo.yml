@@ -1,27 +1,21 @@
-name: "LinkedIn Profile Lookup"
+name: "Find User's Current Company and CEO"
 steps:
-  - name: "Ask for User Name"
+  - name: "Ask for Profile Name"
     uses: "ManualInput"
-    id: "ask-user-name"
+    id: "ask-profile-name"
     inputs:
-      question: "Please provide the LinkedIn profile name:"
+      question: "Please enter the user's name:"
 
-  - name: "Search LinkedIn Profile"
+  - name: "Search on LinkedIn"
     uses: "LinkedInSearch"
     id: "linkedin-search"
     inputs:
-      query: "${{ ask-user-name.outputs.name }}"
+      query: "${{ ask-profile-name.outputs.name }}"
 
-  - name: "Log Company Information"
+  - name: "Process LinkedIn Data"
     uses: "Log"
     inputs:
-      data: "Company: ${{ linkedin-search.outputs.company }}"
-
-  - name: "Log CEO Information"
-    uses: "Log"
-    inputs:
-      data: |
-        CEO Name: ${{ linkedin-search.outputs.ceo.name }}
-        Title: ${{ linkedin-search.outputs.ceo.title }}
-        Location: ${{ linkedin-search.outputs.ceo.location }}
-        LinkedIn: ${{ linkedin-search.outputs.ceo.url }}
+      data: >
+        The user searched is likely: ${{ linkedin-search.outputs.data.results[0].name.first }} ${{ linkedin-search.outputs.data.results[0].name.last }}.
+        Location: ${{ linkedin-search.outputs.data.results[0].location.city }}, ${{ linkedin-search.outputs.data.results[0].location.state }}, ${{ linkedin-search.outputs.data.results[0].location.country }}.
+        Gender: ${{ linkedin-search.outputs.data.results[0].gender }}.

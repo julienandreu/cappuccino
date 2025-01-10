@@ -6,21 +6,13 @@ export class LinkedInSearch extends BaseStep {
     };
 
     outputs = {
-        company: "",
-        ceo: {
-            name: "",
-            title: "",
-            location: "",
-            url: ""
-        }
+        data: {}
     };
 
     async run() {
-        // Fake LinkedIn Search
-        this.outputs.company = "Company";
-        this.outputs.ceo.name = "CEO";
-        this.outputs.ceo.title = "CEO";
-        this.outputs.ceo.location = "Location";
-        this.outputs.ceo.url = "https://linkedin.com/in/ceo";
+        const response = await fetch(process.env.LINKEDIN_SEARCH_URL || '');
+        const data = await response.json();
+
+        this.outputs.data = data;
     }
 }

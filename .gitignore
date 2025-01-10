@@ -117,3 +117,6 @@ dist
 
 # IntelliJ
 .idea
+
+# Memory
+engine/memory/*.yml

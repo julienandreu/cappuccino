@@ -5,6 +5,7 @@ import { pid } from "node:process";
 import { parse } from 'yaml';
 import { build } from "./steps/factory.ts";
 import { JSONPath } from 'jsonpath-plus';
+import { Workflow } from './types.ts';
 
 const nanoid = customAlphabet('0123456789abcdefghjkmnpqrstuvwxyz', 5)
 
@@ -14,18 +15,6 @@ const sourcePath = resolve(import.meta.dirname, "workflows", "get-current-ceo.ym
 const runPath = resolve(import.meta.dirname, "memory", runId);
 console.log(runPath);
 writeFileSync(runPath, JSON.stringify({}, null, 2));
-
-type Step = {
-    name: string;
-    uses: string;
-    id?: string;
-    inputs?: Record<string, any>;
-};
-
-type Workflow = {
-    name: string;
-    steps: Step[];
-};
 
 const workflow = readFileSync(sourcePath, "utf-8");
 const parsedWorkflow = parse(workflow) as Workflow;
@@ -118,4 +107,4 @@ for (const step of parsedWorkflow.steps) {
     console.groupEnd();
 }
 
-rmSync(runPath);
+// rmSync(runPath);

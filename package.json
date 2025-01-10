@@ -2,7 +2,8 @@
   "name": "cappuccino",
   "packageManager": "yarn@4.6.0",
   "scripts": {
-    "dev": "deno --allow-read --allow-write --allow-env engine/engine.ts"
+    "prompt": "deno --allow-run --allow-net --allow-read --allow-write --allow-env engine/prompt.ts",
+    "dev": "LINKEDIN_SEARCH_URL=https://randomuser.me/api/ deno --allow-net --allow-read --allow-write --allow-env engine/engine.ts"
   },
   "dependencies": {
     "jsonpath-plus": "^10.2.0",
